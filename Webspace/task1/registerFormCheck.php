@@ -104,4 +104,7 @@
         echo "Thank you for joining the Computing Security network";
       } 
   }
+  else if ($errorOccurred == 1) {
+    echo "An unknown error occurred!";
+  }
 ?>
