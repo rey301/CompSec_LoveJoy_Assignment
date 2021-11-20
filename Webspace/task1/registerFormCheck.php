@@ -33,7 +33,7 @@
     $errorOccurred = 1;
   }
 
-  if ($username=="")
+  if ($name=="")
   {
     echo "Name was blank! <br/>";
     $errorOccurred = 1;
@@ -48,14 +48,14 @@
   // Query the database to retrieve the table SystemUser
   $userResult = $conn -> query("SELECT * FROM SystemUser");
 
-  // Check if username already exists in the database
+  // Check if name already exists in the database
   // Loop from the first to the last record
   while ($userRow = mysqli_fetch_array($userResult))
   {
     // Check to see if the current user's name matches the one in the database
     if ($userRow['Name'] == $name)
     {
-      echo "The username has already been used. <br/>";
+      echo "This name has already been used. <br/>";
       $errorOccurred = 1;
     }
   }
