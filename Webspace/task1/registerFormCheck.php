@@ -89,8 +89,10 @@
   if ($errorOccurred == 0) {
     //echo "errorOccurred is 0 </br>";
     // Add all of the contents of the variables to the SystemUser table
+
+    $passwordHash = password_hash($password1, PASSWORD_DEFAULT);
     $sql = "INSERT INTO SystemUser (Email, Password, Name, PhoneNumber) 
-    VALUES ('$email1', '$password1', '$name', '$phoneNumber')";
+    VALUES ('$email1', '$passwordHash', '$name', '$phoneNumber')";
     
     if ($conn -> query($sql) === TRUE) {
       // Thank the new user for joining
