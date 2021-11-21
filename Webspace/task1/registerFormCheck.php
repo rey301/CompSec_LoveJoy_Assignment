@@ -21,52 +21,44 @@
 
   // Make sure that all text boxes were not blank.
 
-  if ($email1=="" OR $email2=="")
-  {
+  if ($email1=="" OR $email2=="") {
     echo "Email was blank! <br/>";
     $errorOccurred = 1;
   }
 
-  if ($password1=="" OR $password2="")
-  {
+  if ($password1=="" OR $password2="") {
     echo "Password was blank! <br/>";
     $errorOccurred = 1;
   }
 
-  if ($name=="")
-  {
+  if ($name=="") {
     echo "Name was blank! <br/>";
     $errorOccurred = 1;
   }
 
-  if ($phoneNumber=="")
-  {
+  if ($phoneNumber=="") {
     echo "Telephone Contact Number was blank! <br/>";
     $errorOccurred = 1;
   }
 
-  // Query the database to retrieve the table SystemUser
+  // Retrieve the table SystemUser
   $userResult = $conn -> query("SELECT * FROM SystemUser");
 
   // Check if name already exists in the database
   // Loop from the first to the last record
-  while ($userRow = mysqli_fetch_array($userResult))
-  {
+  while ($userRow = mysqli_fetch_array($userResult)) {
     // Check to see if the current user's name matches the one in the database
-    if ($userRow['Name'] == $name)
-    {
+    if ($userRow['Name'] == $name) {
       echo "This name has already been used. <br/>";
       $errorOccurred = 1;
     }
   }
-
+  
   // Check if email already exists in the database
   // Loop from the first to the last record
-  while ($userRow = mysqli_fetch_array($userResult))
-  {
+  while ($userRow = mysqli_fetch_array($userResult)) {
     // Check to see if the current user's email matches the one in the database 
-    if ($userRow['Email'] == $email1)
-    {
+    if ($userRow['Email'] == $email1) {
       echo "This email address has already been used! <br/>";
       $errorOccurred = 1;
     }
@@ -90,19 +82,24 @@
   //  echo "Passwords do not match! <br/>";
   //  $errorOccurred = 1; 
   //}
+  
+  //echo "final error check <br/>";
 
   // Check to see if an error has occurred, if so add contents to the database
-  if ($errorOccurred == 0)
-  {
+  if ($errorOccurred == 0) {
+    //echo "errorOccurred is 0 </br>";
     // Add all of the contents of the variables to the SystemUser table
-    $sql = "INSERT INTO SystemUser (Email, Password, Name, PhoneNumber)
+    $sql = "INSERT INTO SystemUser (Email, Password, Name, PhoneNumber) 
     VALUES ('$email1', '$password1', '$name', '$phoneNumber')";
-    if ($conn -> query ($sql) === TRUE)
-      {
-        // Thank the new user for joining
-        echo "Hello &ensp" .$forename ."-".$surname ."<br/>";
-        echo "Thank you for joining the Computing Security network";
-      } 
+    
+    if ($conn -> query($sql) === TRUE) {
+      // Thank the new user for joining
+      echo "Hello " . $name ."</br>";
+      echo "Thank you for joining the Computing Security network";
+    } 
+    else {
+      echo "Error: " . $sql . "<br>" . $conn->error;
+    }
   }
   else if ($errorOccurred == 1) {
     echo "An unknown error occurred!";
