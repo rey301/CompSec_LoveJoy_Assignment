@@ -83,13 +83,9 @@
   //  $errorOccurred = 1; 
   //}
   
-  //echo "final error check <br/>";
-
   // Check to see if an error has occurred, if so add contents to the database
   if ($errorOccurred == 0) {
-    //echo "errorOccurred is 0 </br>";
     // Add all of the contents of the variables to the SystemUser table
-
     $passwordHash = password_hash($password1, PASSWORD_DEFAULT);
     $sql = "INSERT INTO SystemUser (Email, Password, Name, PhoneNumber) 
     VALUES ('$email1', '$passwordHash', '$name', '$phoneNumber')";
