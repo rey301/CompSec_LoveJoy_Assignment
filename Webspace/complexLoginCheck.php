@@ -12,7 +12,7 @@
 $conn = new mysqli($mysql_host, $mysql_user,$mysql_password, $mysql_database) or die ("could not connect to the server");
 
 // values come from user, through webform
- $username =$_POST['txtUsername'];
+ $name = $_POST['txtName'];
  $password = $_POST['txtPassword'];
 
  // query
@@ -27,13 +27,13 @@ $conn = new mysqli($mysql_host, $mysql_user,$mysql_password, $mysql_database) or
   {
     while ($userRow = $userResult -> fetch_assoc())
     {
-      if ($userRow['Username'] == $username)
+      if ($userRow['Name'] == $name)
       {
         $userFound = 1;
 	  if ($userRow['Password'] == $password)
 	  {
-	    echo "Hi" .$username . "!";
-	    echo "<br/> Welcome to our website";
+	    echo "Hi " . $name . "!<br/>";
+	    echo "Welcome to our website";
 	  }
 	  else
 	  {
