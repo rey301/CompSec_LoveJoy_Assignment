@@ -26,7 +26,7 @@
     $errorOccurred = 1;
   }
 
-  if ($password1=="" OR $password2="") {
+  if ($password1=="" OR $password2=="") {
     echo "Password was blank! <br/>";
     $errorOccurred = 1;
   }
@@ -75,13 +75,13 @@
   {
     echo "Emails do not match! <br/>";
   }
-
+  
   // Check to make sure that passwords match
-  //if ($password1 != $password2)
-  //{
-  //  echo "Passwords do not match! <br/>";
-  //  $errorOccurred = 1; 
-  //}
+  if (strcmp($password1, $password2) != 0)
+  {
+    echo "Passwords do not match! <br/>";
+    $errorOccurred = 1; 
+  }
   
   // Check to see if an error has occurred, if so add contents to the database
   if ($errorOccurred == 0) {
