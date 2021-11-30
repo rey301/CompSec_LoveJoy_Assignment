@@ -71,8 +71,7 @@
   }
 
   // Check to make sure that emails match
-  if($email1 != $email2)
-  {
+  if(strcmp($email1, $email2) != 0) {
     echo "Emails do not match! <br/>";
   }
   
@@ -86,11 +85,20 @@
   // Check to see if an error has occurred, if so add contents to the database
   if ($errorOccurred == 0) {
     // Add all of the contents of the variables to the SystemUser table
-    $passwordHash = password_hash($password1, PASSWORD_DEFAULT);
-    $sql = "INSERT INTO SystemUser (Email, Password, Name, PhoneNumber) 
-    VALUES ('$email1', '$passwordHash', '$name', '$phoneNumber')";
+    if (defined('PASSWORD_ARGON2I')) {
+      $passwordHash = password_hash($password1, PASSWORD_ARGON2I);
+    }
+    else {
+      $passwordHash = password_hash($password1, PASSWORD_DEFAULT);
+    }
     
-    if ($conn -> query($sql) === TRUE) {
+    $stmt = $conn->prepare("INSERT INTO SystemUser (Email, Password, Name, PhoneNumber) 
+    VALUES (?, ?, ?, ?)");
+
+    // Bind parameters to the query
+    $stmt->bind_param("ssss", $email1, $passwordHash, $name, $phoneNumber);
+    
+    if ($stmt->execute()) {
       // Thank the new user for joining
       echo "Hello " . $name ."</br>";
       echo "Thank you for joining the Computing Security network";
