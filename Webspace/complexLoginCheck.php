@@ -23,12 +23,12 @@
   echo "<table border='1'>";
   if ($userResult -> num_rows > 0) {
     while ($userRow = $userResult -> fetch_assoc()) {
-      echo "name = " . $name . "<br/>";
       if ($userRow['Name'] == $name) {
         $userFound = 1;
-        if ($userRow['Password'] == $password) {
+        //injection code: ',password_hash('',PASSWORD_DEFAULT))) { //
+        if (password_verify($password, $userRow['Password'])) {
           echo "Hi " . $name . "!<br/>";
-          echo "Welcome to our website";
+          echo "Welcome to our website!";
         }
         else {
           echo "Wrong Password";
