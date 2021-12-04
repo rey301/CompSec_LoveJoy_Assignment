@@ -25,9 +25,8 @@
     while ($userRow = $userResult -> fetch_assoc()) {
       if ($userRow['Name'] == $name) {
         $userFound = 1;
-        //injection code: ',password_hash('',PASSWORD_DEFAULT))) { //
         if (password_verify($password, $userRow['Password'])) {
-          echo "Hi " . $name . "!<br/>";
+          echo "Hi " . htmlspecialchars($name) . "!<br/>";
           echo "Welcome to our website!";
         }
         else {

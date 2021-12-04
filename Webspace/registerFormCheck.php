@@ -20,7 +20,6 @@
   $errorOccurred = 0;
 
   // Make sure that all text boxes were not blank.
-
   if ($email1=="" OR $email2=="") {
     echo "Email was blank! <br/>";
     $errorOccurred = 1;
@@ -40,7 +39,38 @@
     echo "Telephone Contact Number was blank! <br/>";
     $errorOccurred = 1;
   }
-
+  
+  //HTML tag checking (making sure no tags are used within the text fields)
+  if ($email1 != strip_tags($email1)) {
+	  echo "Email contains HTML tags! Please remove!</br>";
+	  $errorOccurred = 1;
+  }
+  
+  if ($email2 != strip_tags($email2)) {
+	  echo "Confirm email contains HTML tags! Please remove!</br>";
+	  $errorOccurred = 1;
+  }
+  
+  if ($password1 != strip_tags($password1)) {
+	  echo "Password contains HTML tags! Please remove!</br>";
+	  $errorOccurred = 1;
+  }
+  
+  if ($password2 != strip_tags($password2)) {
+	  echo "Confirm password contains HTML tags! Please remove!</br>";
+	  $errorOccurred = 1;
+  }
+  
+  if ($name != strip_tags($name)) {
+	  echo "Name contains HTML tags! Please remove!</br>";
+	  $errorOccurred = 1;
+  }
+  
+  if ($phoneNumber != strip_tags($phoneNumber)) {
+	  echo "Phone number contains HTML tags! Please remove!</br>";
+	  $errorOccurred = 1;
+  }
+  
   // Retrieve the table SystemUser
   $userResult = $conn -> query("SELECT * FROM SystemUser");
 
@@ -108,6 +138,6 @@
     }
   }
   else if ($errorOccurred == 1) {
-    echo "An unknown error occurred!";
+    echo "User could not be registered.";
   }
 ?>
