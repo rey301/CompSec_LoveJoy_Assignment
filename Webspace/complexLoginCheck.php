@@ -9,6 +9,16 @@
   // Connect to the server
   $conn = new mysqli($mysql_host, $mysql_user,$mysql_password, $mysql_database) or die ("could not connect to the server");
 
+  $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+  if (!$token || $token !== $_SESSION['token']) {
+    // show an error message
+    echo '<p class="error">Error: invalid form submission</p>';
+    // return 405 http status code
+    header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+    exit;
+  }
+
   // Values come from user, through webform
   $name = $_POST['txtName'];
   $password = $_POST['txtPassword'];

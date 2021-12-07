@@ -15,52 +15,104 @@
   $password2 = $_POST['txtPassword2'];
   $name = $_POST['txtName'];
   $phoneNumber = $_POST['txtPhoneNumber'];
-
+  
   // Create a variable to indicate if an error has occurred or not, 0=false and 1=true. 
   $errorOccurred = 0;
 
+  // Retrieve the table SystemUser
+  $userResult = $conn -> query("SELECT * FROM SystemUser");
+
   // Make sure that all text boxes were not blank.
   if ($email1=="" OR $email2=="") {
-    echo "Email was blank! <br/>";
+    echo "Email is blank! <br/>";
     $errorOccurred = 1;
   }
-
+  else if ($email1 != strip_tags($email1)) {
+	  echo "Email contains HTML tags ('<','>'). Please remove!</br>";
+	  $errorOccurred = 1;
+  }
+  else if (strpos ($email1, "@") == false OR strpos($email2,"@") == false) {
+    echo "Email is not valid! Must contain '@'. <br/>";
+    $errorOccurred = 1;
+  }
+  // Check to make sure that emails match
+  else if(strcmp($email1, $email2) != 0) { 
+    echo "Emails do not match! <br/>";
+    $errorOccurred = 1;
+  }
+  else {
+    // Check if email already exists in the database
+    // Loop from the first to the last record
+    while ($userRow = mysqli_fetch_array($userResult)) {
+      // Check to see if the current user's email matches the one in the database 
+      if ($userRow['Email'] == $email1) {
+      echo "This email address has already been used! <br/>";
+      $errorOccurred = 1;
+      }
+    }
+  }
+  
+  //Password policies
+  //Policy 1: Password must not be null/empty
   if ($password1=="" OR $password2=="") {
-    echo "Password was blank! <br/>";
+    echo "Password is blank! <br/>";
     $errorOccurred = 1;
   }
+  //Policy 2: Password must be between 8-16 characters
+  else if (strlen($password1) < 8 OR strlen($password1) > 16) {
+    echo "Password must be between 8-16 characters.<br/>";
+  }
+  //Policy 3: Password must contain both upper and lower case letters
+  else if (!preg_match("/[A-Z]/", $password1) == 1) {
+    echo "Password must contain upper case letters.</br>";
+	  $errorOccurred = 1;
+  }
+  else if (!preg_match("/[a-z]/", $password1) == 1) {
+    echo "Password must contain lower case letters.</br>";
+	  $errorOccurred = 1;
+  }
+  //Policy 4: Password must contain at least one punctuation (excluding tags <>)
+  else if (!preg_match("/[[:punct:]]/",$password1)) {
+    echo "Password must contain at least one punctuation (excluding tags <>).</br>";
+	  $errorOccurred = 1;
+  }
+  //Policy 5: Password must not contain any HTML tags to prevent XSS
+  else if ($password1 != strip_tags($password1)) {
+	  echo "Password contains HTML tags ('<','>'). Please remove!</br>";
+	  $errorOccurred = 1;
+  }
+  //Policy 6: Password must contain at least one number
+  else if (!preg_match("/[0-9]/",$password1)) {
+    echo "Password must contain at least one number.</br>";
+	  $errorOccurred = 1;
+  }
+  // Check to make sure that passwords match
+  else if (strcmp($password1, $password2) != 0) {
+    echo "Passwords do not match! <br/>";
+    $errorOccurred = 1; 
+  }
 
+  //Checking if rest of the form is blank
   if ($name=="") {
-    echo "Name was blank! <br/>";
+    echo "Name is blank! <br/>";
     $errorOccurred = 1;
+  }
+  else {
+    while ($userRow = mysqli_fetch_array($userResult)) {
+      // Check to see if the current user's name matches the one in the database
+      if ($userRow['Name'] == $name) {
+        echo "Name has already been used. <br/>";
+        $errorOccurred = 1;
+      }
+    }
   }
 
   if ($phoneNumber=="") {
-    echo "Telephone Contact Number was blank! <br/>";
+    echo "Telephone Number is blank! <br/>";
     $errorOccurred = 1;
   }
-  
+
   //HTML tag checking (making sure no tags are used within the text fields)
-  if ($email1 != strip_tags($email1)) {
-	  echo "Email contains HTML tags! Please remove!</br>";
-	  $errorOccurred = 1;
-  }
-  
-  if ($email2 != strip_tags($email2)) {
-	  echo "Confirm email contains HTML tags! Please remove!</br>";
-	  $errorOccurred = 1;
-  }
-  
-  if ($password1 != strip_tags($password1)) {
-	  echo "Password contains HTML tags! Please remove!</br>";
-	  $errorOccurred = 1;
-  }
-  
-  if ($password2 != strip_tags($password2)) {
-	  echo "Confirm password contains HTML tags! Please remove!</br>";
-	  $errorOccurred = 1;
-  }
-  
   if ($name != strip_tags($name)) {
 	  echo "Name contains HTML tags! Please remove!</br>";
 	  $errorOccurred = 1;
@@ -70,48 +122,17 @@
 	  echo "Phone number contains HTML tags! Please remove!</br>";
 	  $errorOccurred = 1;
   }
-  
-  // Retrieve the table SystemUser
-  $userResult = $conn -> query("SELECT * FROM SystemUser");
 
   // Check if name already exists in the database
   // Loop from the first to the last record
   while ($userRow = mysqli_fetch_array($userResult)) {
     // Check to see if the current user's name matches the one in the database
     if ($userRow['Name'] == $name) {
-      echo "This name has already been used. <br/>";
-      $errorOccurred = 1;
-    }
-  }
-  
-  // Check if email already exists in the database
-  // Loop from the first to the last record
-  while ($userRow = mysqli_fetch_array($userResult)) {
-    // Check to see if the current user's email matches the one in the database 
-    if ($userRow['Email'] == $email1) {
-      echo "This email address has already been used! <br/>";
+      echo "Name has already been used. <br/>";
       $errorOccurred = 1;
     }
   }
 
-  // Check to make sure that the email address contains @
-  if (strpos ($email1, "@") == false OR strpos($email2,"@") == false)
-  {
-    echo "The second email address is not valid! <br/>";
-  }
-
-  // Check to make sure that emails match
-  if(strcmp($email1, $email2) != 0) {
-    echo "Emails do not match! <br/>";
-  }
-  
-  // Check to make sure that passwords match
-  if (strcmp($password1, $password2) != 0)
-  {
-    echo "Passwords do not match! <br/>";
-    $errorOccurred = 1; 
-  }
-  
   // Check to see if an error has occurred, if so add contents to the database
   if ($errorOccurred == 0) {
     // Add all of the contents of the variables to the SystemUser table
