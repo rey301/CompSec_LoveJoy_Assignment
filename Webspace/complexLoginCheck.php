@@ -1,23 +1,15 @@
 <?php
-  // Server and db connection
-  $mysql_host="krier.uscs.susx.ac.uk";
-  // qW2bp4hG5&31v6jVOeTd
-  $mysql_database="G6077_ar629";    // name of the database, it is empty for now
-  $mysql_user="ar629";    // type your username
-  $mysql_password="Mysql_492467";  //  type the password, it is Mysql_<Personcod> You will need to replace person code with number from your ID card.
+  require 'sqlConn.php';
 
-  // Connect to the server
-  $conn = new mysqli($mysql_host, $mysql_user,$mysql_password, $mysql_database) or die ("could not connect to the server");
+  //$token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
 
-  $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
-
-  if (!$token || $token !== $_SESSION['token']) {
-    // show an error message
-    echo '<p class="error">Error: invalid form submission</p>';
-    // return 405 http status code
-    header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-    exit;
-  }
+  // if (!$token || $token !== $_SESSION['token']) {
+  //   // show an error message
+  //   echo '<p class="error">Error: invalid form submission</p>';
+  //   // return 405 http status code
+  //   header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+  //   exit;
+  // }
 
   // Values come from user, through webform
   $name = $_POST['txtName'];
