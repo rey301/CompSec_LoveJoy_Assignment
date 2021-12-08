@@ -157,6 +157,8 @@
     else {
       echo "Error: " . $sql . "<br>" . $conn->error;
     }
+
+    $stmt -> close();
   }
   else if ($errorOccurred == 1) {
     echo "User could not be registered.";
