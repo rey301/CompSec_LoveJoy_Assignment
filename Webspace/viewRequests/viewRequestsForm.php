@@ -1,8 +1,6 @@
 <?php
     require "../sqlConn.php";
 
-    // Query
-    $userResult = $conn->query("SELECT * FROM SystemUser");
     $errorOccurred = 0;
 
     echo "<form action='/viewRequests/viewRequestsCheck.php'' method='POST'>";
@@ -15,6 +13,8 @@
     <th>Name</th>
     </tr>";
     
+    // View the users except admin
+    $userResult = $conn->query("SELECT * FROM SystemUser");
     if ($userResult -> num_rows > 0) {
         while ($userRow = $userResult -> fetch_assoc()) {
             if ($userRow['UserAdmin'] == 0) {

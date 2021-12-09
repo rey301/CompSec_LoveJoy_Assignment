@@ -2,13 +2,14 @@
     session_start();
 
     require '../sqlConn.php';
+
+    $errorOccurred = 0;
     
     $userID = $_SESSION['userID'];
     $password1 = $_POST['txtPassword1'];
     $password2 = $_POST['txtPassword2'];
 
-    $errorOccurred = 0;
-
+    // Check if password passes our policies
     require '../passwordPolicies.php';
 
     if ($errorOccurred == 0) {
@@ -31,11 +32,13 @@
         } 
         else {
           echo "Error: " . $sql . "<br>" . $conn->error;
+          $errorOccurred = 1;
         }
     
         $stmt -> close();
     }
-    else if ($errorOccurred == 1) {
+    
+    if ($errorOccurred == 1) {
         echo "Could not update password.";
     }
 
