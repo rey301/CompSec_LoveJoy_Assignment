@@ -7,7 +7,8 @@
 
     echo "<form action='/viewRequests/viewRequestsCheck.php'' method='POST'>";
     echo "<pre>";
-
+    echo "<h1>List of users</h1>";
+    echo "<h2>Click usernames to view requests</h2>";
     echo "<table border='1'>
     <tr>
     <th>User ID</th>
@@ -20,8 +21,7 @@
                 {
                     echo "<tr>";
                     echo "<td>" . $userRow['UserID'] . "</td>";
-                    echo "<td><input type='submit' value=". $userRow['Name'] . "></td>";
-                    echo "<input type='hidden' value=" . $userRow['UserID'] ." name='userID'>";
+                    echo "<td><input type='submit' value=" . $userRow['Name'] . " name=" . $userRow['UserID'] . "></td>";
                     echo "</tr>";
                 }
             }
