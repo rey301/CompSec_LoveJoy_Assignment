@@ -1,5 +1,5 @@
 <?php
-  require 'sqlConn.php';
+  require '../sqlConn.php';
 
   // Copy all of the data from the form into variables
   $email1 = $_POST['txtEmail1'];
@@ -45,7 +45,7 @@
     }
   }
   
-  require 'passwordPolicies.php';
+  require '../passwordPolicies.php';
 
   //Checking if rest of the form is blank
   if ($name=="") {

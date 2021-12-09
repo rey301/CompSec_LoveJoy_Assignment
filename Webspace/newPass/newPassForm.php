@@ -1,7 +1,7 @@
 <?php
     session_start();
 
-    require 'sqlConn.php';
+    require '../sqlConn.php';
 
     //Verify user
     $token = hex2bin($_GET["token"]);
@@ -37,12 +37,11 @@
                 if ($userRow['Email'] == $email) {
                     $name = $userRow['Name'];
 
-                    $id = $userRow['userID'];
                     // Remove the 'id' key if it exists
-                    if (isset($_SESSION['id'])) {
-                        unset($_SESSION['id']);
+                    if (isset($_SESSION['userID'])) {
+                        unset($_SESSION['userID']);
                     }
-                    $_SESSION['id'] = $id;
+                    $_SESSION['userID'] = $userRow['UserID'];
 
                     $userVerified = True;
                 }
@@ -50,7 +49,7 @@
 
             if ($userVerified) {
                 // Allow user to input new password
-                echo "<form action='newPasswordCheck.php' method='POST'>";
+                echo "<form action='/newPass/newPassCheck.php' method='POST'>";
                 echo "<pre>";
                 echo "<h1>Set a new password for ".htmlspecialchars($name)."</h1>";
                 echo "New password      ";

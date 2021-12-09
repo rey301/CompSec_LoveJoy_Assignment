@@ -1,5 +1,5 @@
 <?php
-    echo "<form action='registerFormCheck.php' method='POST'>";
+    echo "<form action='/register/registerCheck.php' method='POST'>";
     echo "<pre>";
     echo "<h1>Sign up</h1>";
     echo "Email";

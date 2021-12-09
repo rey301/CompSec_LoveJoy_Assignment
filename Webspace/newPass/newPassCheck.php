@@ -1,15 +1,15 @@
 <?php
     session_start();
 
-    require 'sqlConn.php';
+    require '../sqlConn.php';
     
-    $id = $_SESSION['id'];
+    $userID = $_SESSION['userID'];
     $password1 = $_POST['txtPassword1'];
     $password2 = $_POST['txtPassword2'];
 
     $errorOccurred = 0;
 
-    require 'passwordPolicies.php';
+    require '../passwordPolicies.php';
 
     if ($errorOccurred == 0) {
         // Add all of the contents of the variables to the SystemUser table
@@ -21,9 +21,9 @@
         }
         
         //Update user
-        $stmt = $conn->prepare("UPDATE SystemUser SET Password = ? WHERE userID = ?");
+        $stmt = $conn->prepare("UPDATE SystemUser SET Password = ? WHERE UserID = ?");
         // Bind parameters to the query
-        $stmt->bind_param("si", $passwordHash, $id);
+        $stmt->bind_param("si", $passwordHash, $userID);
         
         if ($stmt->execute()) {
           // Acknowledge password has been updated

@@ -1,5 +1,5 @@
 <?php
-    echo "<form action='forgotPassCheck.php' method='POST'>";
+    echo "<form action='/forgotPass/forgotPassCheck.php' method='POST'>";
     echo "<pre>";
     echo "<h1>Reset your password</h1>";
     echo "<h2>Instructions will be sent to your email address</h2>";

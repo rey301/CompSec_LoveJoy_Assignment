@@ -2,7 +2,7 @@
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
 
-    require 'sqlConn.php';
+    require '../sqlConn.php';
 
     // Copy all of the data from the form into variables
     $email = $_POST['txtEmail'];
@@ -37,7 +37,7 @@
         $token = random_bytes(35);
         $ts = bin2hex(random_bytes(8));
 
-        $url = "https://lovejoyapplication.000webhostapp.com/newPasswordForm.php?token=".bin2hex($token)."&ts=".$ts;
+        $url = "https://lovejoyapplication.000webhostapp.com/newPass/newPassForm.php?token=".bin2hex($token)."&ts=".$ts;
 
         $expiry = time() + 1800; // Link expires after an hour
         
