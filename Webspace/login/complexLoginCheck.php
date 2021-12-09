@@ -13,7 +13,7 @@
   // }
 
   // Values come from user, through webform
-  $name = $_POST['txtName'];
+  $userName = $_POST['txtUserName'];
   $password = $_POST['txtPassword'];
 
   // Query
@@ -24,25 +24,25 @@
 
   if ($userResult -> num_rows > 0) {
     while ($userRow = $userResult -> fetch_assoc()) {
-      if ($userRow['Name'] == $name) {
+      if ($userRow['UserName'] == $userName) {
         $userFound = 1;
-        if (password_verify($password, $userRow['Password'])) {
+        if (password_verify($password, $userRow['UserPassword'])) {
           //Save user's id to session variable
           if (isset($_SESSION['userID'])) {
             unset($_SESSION['userID']);
           }
           $_SESSION['userID'] = $userRow['UserID'];
 
-          if ($userRow['Admin'] == 1) {
+          if ($userRow['UserAdmin'] == 1) {
             echo "<pre>";
-            echo "<h1>Hello " . htmlspecialchars($name) . "</h1>";
+            echo "<h1>Hello " . htmlspecialchars($userName) . "</h1>";
             echo "<h2>Administrator page</h2>";
             echo "<a href='/viewRequests/viewRequestsForm.php'>View requests</a><br>";
             echo "</pre>";
           } 
           else {
             echo "<pre>";
-            echo "<h1>Hello " . htmlspecialchars($name) . "</h1>";
+            echo "<h1>Hello " . htmlspecialchars($userName) . "</h1>";
             echo "<h2>Welcome to Lovejoy!</h2>";
             echo "<a href='/requestEvaluation/requestEvaluationForm.php'>Request evlauation</a><br>";
             echo "</pre>";

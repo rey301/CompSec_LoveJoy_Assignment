@@ -4,11 +4,10 @@
     // Query
     $userResult = $conn->query("SELECT * FROM SystemUser");
     $errorOccurred = 0;
-    $userID;
 
     if ($userResult -> num_rows > 0) {
         while ($userRow = $userResult -> fetch_assoc()) {
-            if ($userRow['Admin'] == 0) {
+            if ($userRow['UserAdmin'] == 0) {
                 {
                     if (isset($_POST[$userRow['UserID']])) {
                         $userID = $userRow['UserID'];

@@ -6,7 +6,7 @@
 
     // Copy all of the data from the form into variables
     $email = $_POST['txtEmail'];
-    $name = '';
+    $userName = '';
     // Create a variable to indicate if email has been found or not
     $emailFound = False;
 
@@ -25,8 +25,8 @@
         // Loop from the first to the last record
         while ($userRow = mysqli_fetch_array($userResult)) {
         // Check to see if the current user's email matches the one in the database 
-            if ($userRow['Email'] == $email) {
-                $name == $userRow['Name'];
+            if ($userRow['UserEmail'] == $email) {
+                $userName = $userRow['UserName'];
                 $emailFound = True;
             }
         }
@@ -42,7 +42,7 @@
         $expiry = time() + 1800; // Link expires after an hour
         
         //Delete from database, the previous tokens and ts
-        $sql = "DELETE FROM ResetPassword WHERE resetEmail=?";
+        $sql = "DELETE FROM ResetPassword WHERE ResetEmail=?";
         $stmt = $conn->prepare($sql);
 
         $stmt->bind_param("s", $email);
@@ -55,7 +55,7 @@
         }
 
         //Delete from database, the previous tokens and ts
-        $sql = "INSERT INTO  ResetPassword (resetEmail, resetToken, resetTS, resetExpiry) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO  ResetPassword (ResetEmail, ResetToken, ResetTS, ResetExpiry) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
 
         if (defined('PASSWORD_ARGON2I')) {
@@ -91,9 +91,9 @@
         $mail->Username = 'lovejoy5431@gmail.com'; // email
         $mail->Password = 'david504'; // password
         $mail->setFrom('david@lovejoy.com', 'LoveJoy'); // From email and name
-        $mail->addAddress($email, $name); // to email and name
-        $mail->Subject = 'PHPMailer GMail SMTP test';
-        $mail->msgHTML($url); //$mail->msgHTML(file_get_contents('contents.html'), __DIR__); //Read an HTML message body from an external file, convert referenced images to embedded,
+        $mail->addAddress($email, $userName); // to email and name
+        $mail->Subject = 'Reset your Lovejoy password';
+        $mail->msgHTML("Hello " . $userName . ", we got a request to reset your Lovejoy password: " .$url); //$mail->msgHTML(file_get_contents('contents.html'), __DIR__); //Read an HTML message body from an external file, convert referenced images to embedded,
         $mail->AltBody = 'HTML messaging not supported'; // If html emails is not supported by the receiver, show this body
         // $mail->addAttachment('images/phpmailer_mini.png'); //Attach an image file
         $mail->SMTPOptions = array(

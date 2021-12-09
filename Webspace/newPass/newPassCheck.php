@@ -21,7 +21,7 @@
         }
         
         //Update user
-        $stmt = $conn->prepare("UPDATE SystemUser SET Password = ? WHERE UserID = ?");
+        $stmt = $conn->prepare("UPDATE SystemUser SET UserPassword = ? WHERE UserID = ?");
         // Bind parameters to the query
         $stmt->bind_param("si", $passwordHash, $userID);
         

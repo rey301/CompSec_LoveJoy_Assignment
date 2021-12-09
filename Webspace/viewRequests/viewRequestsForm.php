@@ -17,11 +17,11 @@
     
     if ($userResult -> num_rows > 0) {
         while ($userRow = $userResult -> fetch_assoc()) {
-            if ($userRow['Admin'] == 0) {
+            if ($userRow['UserAdmin'] == 0) {
                 {
                     echo "<tr>";
                     echo "<td>" . $userRow['UserID'] . "</td>";
-                    echo "<td><input type='submit' value=" . $userRow['Name'] . " name=" . $userRow['UserID'] . "></td>";
+                    echo "<td><input type='submit' value=" . $userRow['UserName'] . " name=" . $userRow['UserID'] . "></td>";
                     echo "</tr>";
                 }
             }

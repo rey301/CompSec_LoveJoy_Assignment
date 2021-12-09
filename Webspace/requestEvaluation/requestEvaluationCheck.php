@@ -26,7 +26,7 @@
     // Checking if file is an image
     if (in_array($accFileExt, $allowedExt)) {
         if ($fileError === 0) {
-            if ($fileSize < 80000) {
+            if ($fileSize < 8000000) {
                 $newFileName = uniqid('',true).".".$accFileExt;
                 $fileDestination = "../images/".$newFileName;
                 move_uploaded_file($fileTmpName, $fileDestination);

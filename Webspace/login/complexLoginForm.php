@@ -3,7 +3,7 @@
     echo "<pre>";
     echo "<h1>Login</h1>";
     echo "Username  ";
-    echo "<input name='txtName' type='text' /> <br/>";
+    echo "<input name='txtUserName' type='text' /> <br/>";
     echo "Password  ";
     echo "<input name='txtPassword' type='password'/><br/><br/>";
     echo "<input type='submit' value='Submit'><br/><br/>";

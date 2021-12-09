@@ -17,9 +17,9 @@
     $userVerified = False;
     while ($resetPwdRow = mysqli_fetch_array($resetPwdResult)) {
         // Check to see if the current user's name matches the one in the database
-        if (password_verify($token, $resetPwdRow['resetToken']) && $resetPwdRow['resetTS'] != $ts) {
-            $email = $resetPwdRow['resetEmail'];
-            $expiry = $resetPwdRow['resetExpiry'];
+        if (password_verify($token, $resetPwdRow['ResetToken']) && $resetPwdRow['ResetTS'] != $ts) {
+            $email = $resetPwdRow['ResetEmail'];
+            $expiry = $resetPwdRow['ResetExpiry'];
             $tokenFound = True;
         }
     }
@@ -34,8 +34,8 @@
             $userResult = $conn -> query("SELECT * FROM SystemUser");
 
             while ($userRow = $userResult -> fetch_assoc()) {
-                if ($userRow['Email'] == $email) {
-                    $name = $userRow['Name'];
+                if ($userRow['UserEmail'] == $email) {
+                    $userName = $userRow['UserName'];
 
                     // Remove the 'id' key if it exists
                     if (isset($_SESSION['userID'])) {
@@ -51,7 +51,7 @@
                 // Allow user to input new password
                 echo "<form action='/newPass/newPassCheck.php' method='POST'>";
                 echo "<pre>";
-                echo "<h1>Set a new password for ".htmlspecialchars($name)."</h1>";
+                echo "<h1>Set a new password for ".htmlspecialchars($userName)."</h1>";
                 echo "New password      ";
                 echo "<input name='txtPassword1' type='password' /> <br/>";
                 echo "Confirm password  ";

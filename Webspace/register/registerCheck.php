@@ -6,7 +6,7 @@
   $email2 = $_POST['txtEmail2'];
   $password1 = $_POST['txtPassword1'];
   $password2 = $_POST['txtPassword2'];
-  $name = $_POST['txtName'];
+  $userName = $_POST['txtUserName'];
   $phoneNumber = $_POST['txtPhoneNumber'];
   
   // Create a variable to indicate if an error has occurred or not, 0=false and 1=true. 
@@ -38,7 +38,7 @@
     // Loop from the first to the last record
     while ($userRow = mysqli_fetch_array($userResult)) {
       // Check to see if the current user's email matches the one in the database 
-      if ($userRow['Email'] == $email1) {
+      if ($userRow['UserEmail'] == $email1) {
       echo "This email address has already been used! <br/>";
       $errorOccurred = 1;
       }
@@ -48,15 +48,15 @@
   require '../passwordPolicies.php';
 
   //Checking if rest of the form is blank
-  if ($name=="") {
-    echo "Name is blank! <br/>";
+  if ($userName=="") {
+    echo "Username is blank! <br/>";
     $errorOccurred = 1;
   }
   else {
     while ($userRow = mysqli_fetch_array($userResult)) {
       // Check to see if the current user's name matches the one in the database
-      if ($userRow['Name'] == $name) {
-        echo "Name has already been used. <br/>";
+      if ($userRow['UserName'] == $name) {
+        echo "Username has already been used. <br/>";
         $errorOccurred = 1;
       }
     }
@@ -68,8 +68,8 @@
   }
 
   //HTML tag checking (making sure no tags are used within the text fields)
-  if ($name != strip_tags($name)) {
-	  echo "Name contains HTML tags! Please remove!</br>";
+  if ($userName != strip_tags($userName)) {
+	  echo "Username contains HTML tags! Please remove!</br>";
 	  $errorOccurred = 1;
   }
   
@@ -82,8 +82,8 @@
   // Loop from the first to the last record
   while ($userRow = mysqli_fetch_array($userResult)) {
     // Check to see if the current user's name matches the one in the database
-    if ($userRow['Name'] == $name) {
-      echo "Name has already been used. <br/>";
+    if ($userRow['UserName'] == $userName) {
+      echo "Username has already been used. <br/>";
       $errorOccurred = 1;
     }
   }
@@ -98,15 +98,15 @@
       $passwordHash = password_hash($password1, PASSWORD_DEFAULT);
     }
     
-    $stmt = $conn->prepare("INSERT INTO SystemUser (Email, Password, Name, PhoneNumber) 
+    $stmt = $conn->prepare("INSERT INTO SystemUser (UserEmail, UserPassword, UserName, UserNumber) 
     VALUES (?, ?, ?, ?)");
 
     // Bind parameters to the query
-    $stmt->bind_param("ssss", $email1, $passwordHash, $name, $phoneNumber);
+    $stmt->bind_param("ssss", $email1, $passwordHash, $userName, $phoneNumber);
     
     if ($stmt->execute()) {
       // Thank the new user for joining
-      echo "Hello " . $name ."</br>";
+      echo "Hello " . $userName ."</br>";
       echo "Thank you for joining the Computing Security network";
     } 
     else {
