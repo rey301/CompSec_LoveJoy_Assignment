@@ -24,6 +24,7 @@
         }
     }
 
+    echo "<pre>";
     if ($tokenFound) {
         //Check expiry
         if ($expiry < time()) {
@@ -50,14 +51,12 @@
             if ($userVerified) {
                 // Allow user to input new password
                 echo "<form action='/newPass/newPassCheck.php' method='POST'>";
-                echo "<pre>";
                 echo "<h1>Set a new password for ".htmlspecialchars($userName)."</h1>";
                 echo "New password      ";
                 echo "<input name='txtPassword1' type='password' /> <br/>";
                 echo "Confirm password  ";
                 echo "<input name='txtPassword2' type='password'/><br/><br/>";
-                echo "<input type='submit' value='Submit'><br/><br/>";
-                echo "</pre>";
+                echo "<input type='submit' value='Submit'><br/><br/><br>";
                 echo "</form>";
             }
             else {
@@ -68,4 +67,6 @@
     else {
         echo "Could not find token. Try again.<br/>";
     }
+    require "../home.php";
+    echo "</pre>";
 ?>

@@ -14,7 +14,8 @@
           </select><br>";
     echo "Image           ";
     echo "<input name='fileImage' type='file'><br><br>";
-    echo "<input type='submit' value='Submit'>";
+    echo "<input type='submit' value='Submit'><br>";
+    require "../home.php";
     echo "</pre>";
     echo "</form>";
 ?>

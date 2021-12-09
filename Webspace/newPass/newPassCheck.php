@@ -11,7 +11,7 @@
 
     // Check if password passes our policies
     require '../passwordPolicies.php';
-
+    echo "<pre>";
     if ($errorOccurred == 0) {
         // Add all of the contents of the variables to the SystemUser table
         if (defined('PASSWORD_ARGON2I')) {
@@ -28,7 +28,7 @@
         
         if ($stmt->execute()) {
           // Acknowledge password has been updated
-          echo "Password updated!<br/>";
+          echo "Password updated!<br>";
         } 
         else {
           echo "Error: " . $sql . "<br>" . $conn->error;
@@ -39,7 +39,8 @@
     }
     
     if ($errorOccurred == 1) {
-        echo "Could not update password.";
+        echo "Could not update password<br>";
     }
-
+    require "../home.php";
+    echo "</pre>";
 ?>

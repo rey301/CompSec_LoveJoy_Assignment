@@ -10,6 +10,7 @@
     $request = $_POST['txtRequest'];
     $contactMethod = $_POST['contactMethod'];
 
+    echo "<pre>";
     // Check text boxes if blank
     if ($descripition == "") {
         echo "Description is blank!<br>";
@@ -76,7 +77,7 @@
         $stmt->bind_param("issss", $userID, $description, $request, $contactMethod, $newFileName);
         
         if ($stmt->execute()) {
-            echo "Evaluation submitted! <br>";
+            echo "Evaluation submitted!<br>";
         } 
         else {
             echo "Error: " . $sql . "<br>" . $conn->error;
@@ -87,7 +88,8 @@
     }
 
     if ($errorOccurred == 1) {
-        echo "Request could not be submitted.<br>";
+        echo "Request could not be submitted<br>";
     }
-    
+    require "../home.php";
+    echo "</pre>";
 ?>
