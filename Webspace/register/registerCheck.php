@@ -1,4 +1,7 @@
 <?php
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
+
     session_start();
 
     $errorOccurred = 0;
@@ -98,13 +101,71 @@
                 $stmt->bind_param("ssss", $email1, $passwordHash, $userName, $phoneNumber);
                 
                 if ($stmt->execute()) {
-                // Thank the new user for joining
-                echo "Hello " . htmlspecialchars($userName)."</br>";
-                echo "Thank you for joining the Computing Security network";
+                    // Thank the new user for joining
+                    echo "Hello " . htmlspecialchars($userName)."<br>";
+                    echo "Thank you for joining the Computing Security network<br>";
+                    
+                    //Construct token and ts
+                    $token = random_bytes(35);
+                    $ts = bin2hex(random_bytes(8));
+
+                    // URL to be sent to user's email address
+                    $url = "https://lovejoyapplication.000webhostapp.com/userVerify/userVerifyCheck.php?token=".bin2hex($token)."&ts=".$ts;
+
+                    // Update previous token and ts from database
+                    // Encrypt token to ensure confidentiality 
+                    if (defined('PASSWORD_ARGON2I')) {
+                        $tokenHash = password_hash($token, PASSWORD_ARGON2I);
+                    }
+                    else {
+                        $tokenHash = password_hash($token, PASSWORD_DEFAULT);
+                    }
+                    $stmt = $conn->prepare("UPDATE SystemUser SET UserToken=?, UserTS=? WHERE UserEmail = ?");
+                    $stmt->bind_param("sss", $tokenHash,$ts,$email1);
+                    if (!$stmt->execute()) {
+                        echo "Error: " . $conn->error;
+                    } 
+
+                    // Generate message 
+                    $msgHTML = "Hello " . $userName . ", please verify your account: " .$url;
+
+                    //Sending email using PHPmailer
+                    require $_SERVER['DOCUMENT_ROOT'] . '/mail/Exception.php';
+                    require $_SERVER['DOCUMENT_ROOT'] . '/mail/PHPMailer.php';
+                    require $_SERVER['DOCUMENT_ROOT'] . '/mail/SMTP.php';
+        
+                    $mail = new PHPMailer;
+                    $mail->isSMTP(); 
+                    $mail->SMTPDebug = 0; // 0 = off (for production use) - 1 = client messages - 2 = client and server messages
+                    $mail->Host = "smtp.gmail.com"; // use $mail->Host = gethostbyname('smtp.gmail.com'); // if your network does not support SMTP over IPv6
+                    $mail->Port = 587; // TLS only
+                    $mail->SMTPSecure = 'tls'; // ssl is deprecated
+                    $mail->SMTPAuth = true;
+                    $mail->Username = 'lovejoy5431@gmail.com'; // email
+                    $mail->Password = 'david504'; // password
+                    $mail->setFrom('david@lovejoy.com', 'LoveJoy'); // From email and name
+                    $mail->addAddress($email1, $userName); // to email and name
+                    $mail->Subject = 'Verify your LoveJoy account';
+                    $mail->msgHTML($msgHTML); //$mail->msgHTML(file_get_contents('contents.html'), __DIR__); //Read an HTML message body from an external file, convert referenced images to embedded,
+                    $mail->AltBody = 'HTML messaging not supported'; // If html emails is not supported by the receiver, show this body
+                    // $mail->addAttachment('images/phpmailer_mini.png'); //Attach an image file
+                    $mail->SMTPOptions = array(
+                        'ssl' => array(
+                            'verify_peer' => false,
+                            'verify_peer_name' => false,
+                            'allow_self_signed' => true
+                        )
+                    );
+        
+                    if(!$mail->send()) {
+                        echo "Mailer Error: " . $mail->ErrorInfo;
+                        $errorOccurred = 1;
+                    }
+                    echo "Please verify your account by clicking on the link we sent via email<br>";
                 } 
                 else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
-                $errorOccurred = 1;
+                    echo "Error: " . $conn->error;
+                    $errorOccurred = 1;
                 }
 
                 $stmt -> close();

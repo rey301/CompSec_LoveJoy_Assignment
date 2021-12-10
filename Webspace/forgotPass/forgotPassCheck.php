@@ -79,12 +79,15 @@
                     } 
         
                     $stmt -> close();
-        
+
+                    // Generate message
+                    $msgHTML = "Hello " . $userName . ", we got a request to reset your Lovejoy password: " .$url;
+
                     //Sending email using PHPmailer
                     require $_SERVER['DOCUMENT_ROOT'] . '/mail/Exception.php';
                     require $_SERVER['DOCUMENT_ROOT'] . '/mail/PHPMailer.php';
                     require $_SERVER['DOCUMENT_ROOT'] . '/mail/SMTP.php';
-        
+                    
                     $mail = new PHPMailer;
                     $mail->isSMTP(); 
                     $mail->SMTPDebug = 0; // 0 = off (for production use) - 1 = client messages - 2 = client and server messages
@@ -97,7 +100,7 @@
                     $mail->setFrom('david@lovejoy.com', 'LoveJoy'); // From email and name
                     $mail->addAddress($email, $userName); // to email and name
                     $mail->Subject = 'Reset your Lovejoy password';
-                    $mail->msgHTML("Hello " . $userName . ", we got a request to reset your Lovejoy password: " .$url); //$mail->msgHTML(file_get_contents('contents.html'), __DIR__); //Read an HTML message body from an external file, convert referenced images to embedded,
+                    $mail->msgHTML($msgHTML); //$mail->msgHTML(file_get_contents('contents.html'), __DIR__); //Read an HTML message body from an external file, convert referenced images to embedded,
                     $mail->AltBody = 'HTML messaging not supported'; // If html emails is not supported by the receiver, show this body
                     // $mail->addAttachment('images/phpmailer_mini.png'); //Attach an image file
                     $mail->SMTPOptions = array(

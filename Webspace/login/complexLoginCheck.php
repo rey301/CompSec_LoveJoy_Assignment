@@ -20,30 +20,36 @@
             if ($userResult -> num_rows > 0) {
               while ($userRow = $userResult -> fetch_assoc()) {
                 if (password_verify($password, $userRow['UserPassword'])) {
-                  //Save user's id to session variable
-                  if (isset($_SESSION['userID'])) {
-                    unset($_SESSION['userID']);
+                  if ($userRow['UserVerified']){
+                    //Save user's id to session variable
+                    if (isset($_SESSION['userID'])) {
+                      unset($_SESSION['userID']);
+                    }
+                    $_SESSION['userID'] = $userRow['UserID'];
+                    
+                    // Generate a new token for the user
+                    require "../csrfToken.php";
+                    if ($userRow['UserAdmin'] == 1) {
+                      echo "<form action='/viewRequests/viewRequestsForm.php' method='POST'>";
+                      echo "<h1>Hello " . htmlspecialchars($userName) . "</h1>";
+                      echo "<h2>Administrator page</h2>";
+                      echo "<input name='submit' type='submit' value='View requests'><br/>";
+                      echo "<input type='hidden' name='token' value=".$token."><br>";
+                      echo "</form>";
+                    } 
+                    else {
+                      echo "<form action='/requestEvaluation/requestEvaluationForm.php' method='POST'>";
+                      echo "<h1>Hello " . htmlspecialchars($userName) . "</h1>";
+                      echo "<h2>Welcome to Lovejoy!</h2>";
+                      echo "<input name='submit' type='submit' value='Request evaluation'><br/>";
+                      echo "<input type='hidden' name='token' value=".$token."><br>";
+                      echo "</form>";
+                    }
                   }
-                  $_SESSION['userID'] = $userRow['UserID'];
-          
-                  require "../csrfToken.php";
-                  if ($userRow['UserAdmin'] == 1) {
-                    echo "<form action='/viewRequests/viewRequestsForm.php' method='POST'>";
-                    echo "<h1>Hello " . htmlspecialchars($userName) . "</h1>";
-                    echo "<h2>Administrator page</h2>";
-                    echo "<input name='submit' type='submit' value='View requests'><br/>";
-                    echo "<input type='hidden' name='token' value=".$token."><br>";
-                    echo "</form>";
-                  } 
                   else {
-                    echo "<form action='/requestEvaluation/requestEvaluationForm.php' method='POST'>";
-                    echo "<h1>Hello " . htmlspecialchars($userName) . "</h1>";
-                    echo "<h2>Welcome to Lovejoy!</h2>";
-                    echo "<input name='submit' type='submit' value='Request evaluation'><br/>";
-                    echo "<input type='hidden' name='token' value=".$token."><br>";
-                    echo "</form>";
+                    echo "Please verify your email before logging in<br>";
+                    $errorOccurred = 1;
                   }
-                  
                 }
                 else {
                   echo "Wrong Password<br>";

@@ -5,11 +5,11 @@
 
     //Verify user
     $token = hex2bin($_GET["token"]);
-    $ts = hex2bin($_GET["ts"]);
+    $ts = $_GET["ts"];
     $email;
     $expiry;
 
-    // Retrieve the table SystemUser
+    // Retrieve the table ResetPassword
     $resetPwdResult = $conn -> query("SELECT * FROM ResetPassword");
 
     //Delete from database, the previous tokens and ts
@@ -17,7 +17,7 @@
     $userVerified = False;
     while ($resetPwdRow = mysqli_fetch_array($resetPwdResult)) {
         // Check to see if the current user's name matches the one in the database
-        if (password_verify($token, $resetPwdRow['ResetToken']) && $resetPwdRow['ResetTS'] != $ts) {
+        if (password_verify($token, $resetPwdRow['ResetToken']) && $resetPwdRow['ResetTS'] == $ts) {
             $email = $resetPwdRow['ResetEmail'];
             $expiry = $resetPwdRow['ResetExpiry'];
             $tokenFound = True;
