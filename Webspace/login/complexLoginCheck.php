@@ -36,7 +36,7 @@
                     echo "</form>";
                   } 
                   else {
-                    echo "<form action='/requestEvaluation/requestEvaluationAuth.php' method='POST'>";
+                    echo "<form action='/requestEvaluation/requestEvaluationForm.php' method='POST'>";
                     echo "<h1>Hello " . htmlspecialchars($userName) . "</h1>";
                     echo "<h2>Welcome to Lovejoy!</h2>";
                     echo "<input name='submit' type='submit' value='Request evaluation'><br/>";

@@ -1,5 +1,6 @@
 <?php
     session_start();
+
     $errorOccurred = 0;
     
     echo "<pre>";
@@ -9,8 +10,10 @@
 
             $errorOccurred = 0;
         
-            echo "<form action='/viewRequests/viewRequestsAuth.php'' method='POST'>";
+            echo "<form action='/viewRequests/viewRequestsCheck.php'' method='POST'>";
             echo "<pre>";
+            require "../csrfToken.php";
+            echo "<input type='hidden' name='token' value=".$token.">";
             echo "<h1>List of users</h1>";
             echo "<h2>Click usernames to view requests</h2>";
             echo "<table border='1'>
@@ -19,9 +22,6 @@
             <th>Name</th>
             </tr>";
             
-            require "../csrfToken.php";
-            echo "<input type='hidden' name='token' value=".$token.">";
-        
             // View the users except admin
             $userResult = $conn->query("SELECT * FROM SystemUser");
             if ($userResult -> num_rows > 0) {

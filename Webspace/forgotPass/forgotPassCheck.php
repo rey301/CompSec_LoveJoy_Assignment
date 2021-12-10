@@ -3,12 +3,12 @@
     use PHPMailer\PHPMailer\Exception;
 
     session_start();
+
     $errorOccurred = 0;
+    $authFailed = 0;
     
     echo "<pre>";
     if (isset($_POST['submit'])) {
-        echo "session token: ".$_SESSION['token']."<br>";
-        echo "post token: ".$_POST['token']."<br>";
         if (hash_equals($_SESSION['token'], $_POST['token'])) {
             require '../sqlConn.php';
         
@@ -121,11 +121,13 @@
         }
         else {
             echo "Failed to authenticate token<br>";
+            $authFailed = 1;
             $errorOccurred = 1;
         }
     }
     else {
-        echo "Submit button not pressed<br>";
+        echo "User not authenticated<br>";
+        $authFailed = 1;
         $errorOccurred = 1;
     }
     if ($errorOccurred == 0) {  
@@ -133,6 +135,12 @@
     }
     else {
         echo "Email was not sent<br>";
+    }
+
+    if ($authFailed == 0) {
+        echo "<form action='/forgotPass/forgotPassForm.php' method='POST'>";
+        echo "<input type='submit' value='Go back'>";
+        echo "</form>";
     }
     require "../home.php";
     echo "</pre>";

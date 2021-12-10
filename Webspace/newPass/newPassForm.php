@@ -50,13 +50,15 @@
 
             if ($userVerified) {
                 // Allow user to input new password
+                require "../csrfToken.php";
                 echo "<form action='/newPass/newPassCheck.php' method='POST'>";
                 echo "<h1>Set a new password for ".htmlspecialchars($userName)."</h1>";
                 echo "New password      ";
                 echo "<input name='txtPassword1' type='password' /> <br/>";
                 echo "Confirm password  ";
                 echo "<input name='txtPassword2' type='password'/><br/><br/>";
-                echo "<input type='submit' value='Submit'><br/><br/><br>";
+                echo "<input type='hidden' name='token' value=".$token.">";
+                echo "<input name='submit' type='submit' value='Submit'><br/><br/><br>";
                 echo "</form>";
             }
             else {

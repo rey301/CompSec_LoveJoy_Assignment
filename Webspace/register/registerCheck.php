@@ -1,7 +1,9 @@
 <?php
     session_start();
+
     $errorOccurred = 0;
-    
+    $authFailed = 0;
+
     echo "<pre>";
     if (isset($_POST['submit'])) {
         if (hash_equals($_SESSION['token'], $_POST['token'])) {
@@ -110,17 +112,28 @@
         }
         else {
             echo "Failed to authenticate token<br>";
+            $authFailed = 1;
             $errorOccurred = 1;
         }
     }
     else {
-        echo "Register button not pressed<br>";
+        echo "Failed to authenticate user<br>";
+        $authFailed = 1;
         $errorOccurred = 1;
     }
     
     if ($errorOccurred == 1) {
         echo "User could not be registered<br>";
     }
+
+    if ($authFailed == 0) {
+        require "../csrfToken.php";
+        echo "<form action='/register/registerForm.php' method='POST'>";
+        echo "<input name='submit' type='submit' value='Go back'>";
+        echo "<input type='hidden' name='token' value=".$token.">";
+        echo "</form>";
+    }
+
     require "../home.php";
     echo "</pre>";
 ?>

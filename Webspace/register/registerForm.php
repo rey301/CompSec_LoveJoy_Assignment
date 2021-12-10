@@ -1,9 +1,10 @@
 <?php
     session_start();
+    
     require "../csrfToken.php";
 
-    echo "<form action='/register/registerAuth.php' method='POST'>";
     echo "<pre>";
+    echo "<form action='/register/registerCheck.php' method='POST'>";
     echo "<h1>Sign up</h1>";
     echo "Email";
     echo "               <input name='txtEmail1' type='text' /><br/>";
@@ -19,6 +20,7 @@
     echo "    <input name='txtPhoneNumber' type='text' /><br/>";
     echo "<input type='hidden' name='token' value=".$token."><br>";
     echo "<input name='submit' type='submit' value='Register'><br><br>";
+        
     require "../home.php";
     echo "</pre>";
     echo "</form>";

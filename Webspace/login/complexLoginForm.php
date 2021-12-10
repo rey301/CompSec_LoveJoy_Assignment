@@ -1,5 +1,5 @@
 <?php
-    echo "<form action='/login/complexLoginAuth.php' method='POST'>";
+    echo "<form action='/login/complexLoginCheck.php' method='POST'>";
     echo "<pre>";
     echo "<h1>Login</h1>";
     echo "Username  ";
