@@ -21,33 +21,33 @@
               while ($userRow = $userResult -> fetch_assoc()) {
                 if (password_verify($password, $userRow['UserPassword'])) {
                   if ($userRow['UserVerified']){
+                    if (isset($_SESSION['userEmail'])) {
+                      unset($_SESSION['userEmail']);
+                    }
+                    $_SESSION['userEmail'] = $userRow['UserEmail'];
+
+                    if (isset($_SESSION['userAdmin'])) {
+                      unset($_SESSION['userAdmin']);
+                    }
+                    $_SESSION['userAdmin'] = $userRow['UserAdmin'];
+                    
                     //Save user's id to session variable
                     if (isset($_SESSION['userID'])) {
                       unset($_SESSION['userID']);
                     }
                     $_SESSION['userID'] = $userRow['UserID'];
-                    
-                    // Generate a new token for the user
-                    require "../csrfToken.php";
-                    if ($userRow['UserAdmin'] == 1) {
-                      echo "<form action='/viewRequests/viewRequestsForm.php' method='POST'>";
-                      echo "<h1>Hello " . htmlspecialchars($userName) . "</h1>";
-                      echo "<h2>Administrator page</h2>";
-                      echo "<input name='submit' type='submit' value='View requests'><br/>";
-                      echo "<input type='hidden' name='token' value=".$token."><br>";
-                      echo "</form>";
-                    } 
-                    else {
-                      echo "<form action='/requestEvaluation/requestEvaluationForm.php' method='POST'>";
-                      echo "<h1>Hello " . htmlspecialchars($userName) . "</h1>";
-                      echo "<h2>Welcome to Lovejoy!</h2>";
-                      echo "<input name='submit' type='submit' value='Request evaluation'><br/>";
-                      echo "<input type='hidden' name='token' value=".$token."><br>";
-                      echo "</form>";
+
+                    //Save user name to session variable
+                    if (isset($_SESSION['userName'])) {
+                      unset($_SESSION['userName']);
                     }
+                    $_SESSION['userName'] = $userRow['UserName'];
+                  
+                    // 2 factor authentication
+                    require '../2fa/2faForm.php';
                   }
                   else {
-                    echo "Please verify your email before logging in<br>";
+                    echo "Please verify your registered email before logging in<br>";
                     $errorOccurred = 1;
                   }
                 }

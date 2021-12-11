@@ -106,7 +106,7 @@
     }
 
     if ($authFailed == 0) {
-    require "../csrfToken.php";
+        require "../csrfToken.php";
         echo "<form action='/requestEvaluation/requestEvaluationForm.php' method='POST'>";
         echo "<input name='submit' type='submit' value='Go back'>";
         echo "<input type='hidden' name='token' value=".$token.">";
