@@ -70,8 +70,9 @@
         $errorOccurred = 1;
     }
     
-    if ($errorOccurred) {
+    if ($errorOccurred == 1) {
         echo "Couldn't log in user<br>";
+        echo "Please resend the 2fa email by logging in again<br>";
     }
 
     require "../home.php";

@@ -71,7 +71,12 @@
 
     echo "<pre>";
     echo "<form action='/2fa/2faCheck.php' method='POST'>";
-    echo "<h1>Please enter the pin we sent to your email</h1>";
+    if ($resetPin == 1) {
+        echo "<h1>Please enter the pin we sent to your email</h1>";
+    }
+    else {
+        echo "<h1>Please re-enter the pin we sent to your email</h1>";
+    }
     echo "<input name='txtPin' type='text' maxlength='5' minLength='5'/><br><br>";
     echo "<input name='submit' type='submit' value='Submit'><br/>";
     echo "<input type='hidden' name='token' value=".$token."><br>";
