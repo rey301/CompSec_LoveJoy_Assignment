@@ -42,6 +42,20 @@
                 // Check for attempt expiry
                 if ($userExpiry == 1) {
                   if (password_verify($password, $userRow['UserPassword'])) {
+                    $userExpiry = 1;
+                    $userAttempts = 0;
+
+                    // Set the expiry and attempts on database
+                    $stmt = $conn->prepare("UPDATE SystemUser SET UserExpiry= ?, UserAttempts = ? WHERE UserID = ?");
+                    // Bind parameters to the query
+                    $stmt->bind_param("iii", $userExpiry, $userAttempts, $userID);
+                    
+                    if (!$stmt->execute()) {
+                      echo "Error: " . $sql . "<br>" . $conn->error;
+                      $errorOccurred = 1;
+                    } 
+                    $stmt -> close();
+                    
                     if ($userRow['UserVerified']){
                       if (isset($_SESSION['resetPin'])) {
                         unset($_SESSION['resetPin']);
@@ -109,7 +123,7 @@
 
                       $stmt -> close();
                     }
-                    
+
                     echo "You have " . (21-htmlspecialchars($userAttempts)) . " attempts left<br>";
                     $errorOccurred = 1;
                   }
