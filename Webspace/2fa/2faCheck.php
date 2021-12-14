@@ -60,13 +60,11 @@
         }
         else {
             echo "Failed to authenticate token<br>";
-            $authFailed = 1;
             $errorOccurred = 1;
         }
     }
     else {
         echo "Failed to authenticate user<br>";
-        $authFailed = 1;
         $errorOccurred = 1;
     }
     

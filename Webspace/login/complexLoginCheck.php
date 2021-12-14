@@ -4,16 +4,26 @@
 
     echo "<pre>";
     if (isset($_POST['submit'])) {
-        if (hash_equals($_SESSION['token'], $_POST['token'])) {
+      if (hash_equals($_SESSION['token'], $_POST['token'])) {
+        if (isset($_POST['g-recaptcha-response'])) {
+          $secret = "6LfUBKEdAAAAALbTSyxlPBzIQZEETfdGBQ8EV47P";
+          $response = $_POST['g-recaptcha-response'];
+          $captchaURL = "https://www.google.com/recaptcha/api/siteverify?secret=" . $secret . "&response=" . $response;
+          $captchaFile = file_get_contents($captchaURL);
+          $captchaData = json_decode($captchaFile);
+          if ($captchaData->success==true) {
             require '../sqlConn.php';
-  
+
             $userName = $_POST['txtUserName'];
             $password = $_POST['txtPassword'];
           
             // Find the user data
             $stmt = $conn->prepare("SELECT * FROM SystemUser WHERE UserName = ?");
             $stmt->bind_param("s", $userName);
-            $stmt->execute();
+            if (!$stmt->execute()) {
+              echo "Error: " . $sql . "<br>" . $conn->error;
+              $errorOccurred = 1;
+            } 
             $userResult = $stmt->get_result();
             $stmt->close();
           
@@ -55,18 +65,18 @@
                       $errorOccurred = 1;
                     } 
                     $stmt -> close();
-                    
+
                     if ($userRow['UserVerified']){
                       if (isset($_SESSION['resetPin'])) {
                         unset($_SESSION['resetPin']);
                       }
                       $_SESSION['resetPin'] = 1;
-  
+
                       if (isset($_SESSION['userEmail'])) {
                         unset($_SESSION['userEmail']);
                       }
                       $_SESSION['userEmail'] = $userRow['UserEmail'];
-  
+
                       if (isset($_SESSION['userAdmin'])) {
                         unset($_SESSION['userAdmin']);
                       }
@@ -77,7 +87,7 @@
                         unset($_SESSION['userID']);
                       }
                       $_SESSION['userID'] = $userID;
-  
+
                       //Save user name to session variable
                       if (isset($_SESSION['userName'])) {
                         unset($_SESSION['userName']);
@@ -138,11 +148,21 @@
               echo "User does not exist<br>";
               $errorOccurred = 1;
             }
+          }
+          else {
+            echo "ReCaptcha failed<br>";
+            $errorOccurred = 1;
+          }
         }
         else {
-            echo "Failed to authenticate token<br>";
-            $errorOccurred = 1;
+          echo "ReCaptcha error<br>";
+          $errorOccurred = 1;
         }
+      }
+      else {
+          echo "Failed to authenticate token<br>";
+          $errorOccurred = 1;
+      }
     }
     else {
         echo "Failed to authenticate user<br>";
