@@ -3,7 +3,12 @@
 
     require '../sqlConn.php';
 
-    //Verify user
+    // SSL data 
+    $key = $_SESSION['key'];
+    $ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
+    $sha2len = 32;
+
+    // Verify user
     $token = hex2bin($_GET["token"]);
     $ts = $_GET["ts"];
     $email;
@@ -26,7 +31,7 @@
 
     echo "<pre>";
     if ($tokenFound) {
-        //Check expiry
+        // Check expiry
         if ($expiry < time()) {
             echo "Link expired!<br/>";
         }
@@ -35,8 +40,27 @@
             $userResult = $conn -> query("SELECT * FROM SystemUser");
 
             while ($userRow = $userResult -> fetch_assoc()) {
-                if ($userRow['UserEmail'] == $email) {
-                    $userName = $userRow['UserName'];
+                // Decrypt email from user table
+                $encryptedEmail = $userRow['UserEmail'];
+                $cEmail = base64_decode($encryptedEmail);
+                $ivEmail = substr($cEmail, 0, $ivlen);
+                $rawEncryptedEmail = substr($cEmail, $ivlen+$sha2len);
+                $decryptedUserEmail= openssl_decrypt($rawEncryptedEmail, $cipher, $key, $options=OPENSSL_RAW_DATA, $ivEmail);
+
+                // Decrypt email from reset password table
+                $encryptedEmail = $email;
+                $cEmail = base64_decode($encryptedEmail);
+                $ivEmail = substr($cEmail, 0, $ivlen);
+                $rawEncryptedEmail = substr($cEmail, $ivlen+$sha2len);
+                $decryptedResetEmail= openssl_decrypt($rawEncryptedEmail, $cipher, $key, $options=OPENSSL_RAW_DATA, $ivEmail);
+
+                if ($decryptedUserEmail == $decryptedResetEmail) {
+                    // Decrypt username
+                    $encryptedName = $userRow['UserName'];
+                    $cName = base64_decode($encryptedName);
+                    $ivName = substr($cName, 0, $ivlen);
+                    $rawEncryptedName = substr($cName, $ivlen+$sha2len);
+                    $userName = openssl_decrypt($rawEncryptedName, $cipher, $key, $options=OPENSSL_RAW_DATA, $ivName);
 
                     // Remove the 'id' key if it exists
                     if (isset($_SESSION['userID'])) {

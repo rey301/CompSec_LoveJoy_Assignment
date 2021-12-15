@@ -4,13 +4,21 @@
 
     require "../csrfToken.php";
     
-    // Generate pin 
-    $num = random_int(0,99999);
+    $errorOccurred = 0;
 
-    $userEmail = $_SESSION['userEmail'];
+    echo "<pre>";
+
     if (isset($_SESSION['userEmail'])) {
+        $userEmail = $_SESSION['userEmail'];
         unset($_SESSION['userEmail']);
     }
+    else {
+        echo "No email found<br>";
+        $errorOccurred = 1;
+    }
+
+    // Generate random pin  
+    $num = random_int(0,99999);
 
     if ($num > 10000) {
         $pin = $num;
@@ -28,15 +36,16 @@
         $pin = '0000'.$num;
     }
 
+    // Set pin to session variable 
     if (isset($_SESSION['pin'])) {
-        unset($_SESSION['pin']);
+        unset($_SESSION['pin']);  
     }
     $_SESSION['pin'] = $pin;
-
+    
     // Generate message 
-    $msgHTML = "Hello " . $userName . ", here is the code you need to access your account: " .$pin;
+    $msgHTML = "Hello " . htmlspecialchars($userName) . ", here is the code you need to access your account: " . $pin;
 
-    //Sending email using PHPmailer
+    // Sending email message using PHPmailer
     require $_SERVER['DOCUMENT_ROOT'] . '/mail/Exception.php';
     require $_SERVER['DOCUMENT_ROOT'] . '/mail/PHPMailer.php';
     require $_SERVER['DOCUMENT_ROOT'] . '/mail/SMTP.php';
@@ -69,18 +78,17 @@
         $errorOccurred = 1;
     }
 
-    echo "<pre>";
-    echo "<form action='/2fa/2faCheck.php' method='POST'>";
-    if ($resetPin == 1) {
+    if ($errorOccurred == 0) {
+        echo "<form action='/2fa/2faCheck.php' method='POST'>";
         echo "<h1>Please enter the pin we sent to your email</h1>";
+        echo "<input name='txtPin' type='text' maxlength='5' minLength='5'/><br><br>";
+        echo "<input name='submit' type='submit' value='Submit'><br/>";
+        echo "<input type='hidden' name='token' value=".$token."><br>";
+        echo "</form>";   
     }
     else {
-        echo "<h1>Please re-enter the pin we sent to your email</h1>";
-    }
-    echo "<input name='txtPin' type='text' maxlength='5' minLength='5'/><br><br>";
-    echo "<input name='submit' type='submit' value='Submit'><br/>";
-    echo "<input type='hidden' name='token' value=".$token."><br>";
-    echo "</form>";
+        echo "2fa error occurred<br>";
+    }   
 
     echo "</pre>";
 ?>

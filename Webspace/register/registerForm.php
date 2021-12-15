@@ -2,7 +2,8 @@
     session_start();
     
     require "../csrfToken.php";
-
+    
+    echo "<script src='https://www.google.com/recaptcha/api.js' async defer></script>";
     echo "<pre>";
     echo "<form action='/register/registerCheck.php' method='POST'>";
     echo "<h1>Sign up</h1>";
@@ -18,6 +19,7 @@
     echo "            <input name='txtUserName' type='text' /><br/>";
     echo "Telephone Number";
     echo "    <input name='txtPhoneNumber' type='text' /><br/>";
+    echo "<div class='g-recaptcha' data-sitekey='6LfUBKEdAAAAAIQPKw55YgKuM1nLosBCzChssqiw'></div><br>";
     echo "<input type='hidden' name='token' value=".$token."><br>";
     echo "<input name='submit' type='submit' value='Register'><br><br>";
         

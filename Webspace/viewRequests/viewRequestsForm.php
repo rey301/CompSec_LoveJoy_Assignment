@@ -1,18 +1,20 @@
 <?php
     session_start();
 
+    require "../sqlConn.php";  
+
     $errorOccurred = 0;
+
+    // SSL Data
+    $key = $_SESSION['key'];
+    $ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
+    $sha2len = 32;
     
     echo "<pre>";
     if (isset($_POST['submit'])) {
         if (hash_equals($_SESSION['token'], $_POST['token'])) {
-            require "../sqlConn.php";
-
-            $errorOccurred = 0;
-        
-            echo "<form action='/viewRequests/viewRequestsCheck.php'' method='POST'>";
-            echo "<pre>";
             require "../csrfToken.php";
+            echo "<form action='/viewRequests/viewRequestsCheck.php'' method='POST'>";
             echo "<input type='hidden' name='token' value=".$token.">";
             echo "<h1>List of users</h1>";
             echo "<h2>Click usernames to view requests</h2>";
@@ -30,7 +32,15 @@
                         {
                             echo "<tr>";
                             echo "<td>" . $userRow['UserID'] . "</td>";
-                            echo "<td><input type='submit' value=" . $userRow['UserName'] . " name=" . $userRow['UserID'] . "></td>";
+
+                            // Decrypt username
+                            $encryptedName = $userRow['UserName'];
+                            $cName = base64_decode($encryptedName);
+                            $ivName = substr($cName, 0, $ivlen);
+                            $rawEncryptedName = substr($cName, $ivlen+$sha2len);
+                            $userName = openssl_decrypt($rawEncryptedName, $cipher, $key, $options=OPENSSL_RAW_DATA, $ivName);
+
+                            echo "<td><input type='submit' value=" . $userName . " name=" . $userRow['UserID'] . "></td>";
                             echo "</tr>";
                         }
                     }

@@ -2,7 +2,14 @@
     session_start();
 
     require "../sqlConn.php";
+
     $errorOccurred = 0;
+    $authFailed = 0;
+
+    // SSL Data
+    $key = $_SESSION['key'];
+    $ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
+    $sha2len = 32;
 
     echo "<pre>";
     // Retrieve which user was clicked from previous page
@@ -19,6 +26,7 @@
                         }
                         else {
                             echo "Failed to authenticate token<br>";
+                            $authFailed = 1;
                             $errorOccurred = 1;
                         }
                     }
@@ -33,10 +41,10 @@
 
     if ($errorOccurred == 0) {
         // Retrieve all requests from specified user
-        $stmt = $conn->prepare("SELECT * FROM EvaluationRequest WHERE UserID=?");
-        $stmt->bind_param("i", $userID);
-        $stmt->execute();
-        $evalReqResult = $stmt->get_result();
+        $stmt = $conn->prepare("SELECT * FROM EvaluationRequest WHERE UserID = ?");
+        $stmt -> bind_param("i", $userID);
+        $stmt -> execute();
+        $evalReqResult = $stmt -> get_result();
         $stmt -> close();
 
         if ($evalReqResult -> num_rows > 0) {
@@ -50,8 +58,33 @@
             while ($evalReqRow = $evalReqResult -> fetch_assoc()) {
                 echo "<tr>";
                 echo "<td>" . $evalReqRow['RequestID'] . "</td>";
-                echo "<td>" . $evalReqRow['Description'] . "</td>";
-                echo "<td>" . $evalReqRow['Request'] . "</td>";
+
+                // Decrypt description
+                $encryptedDesc = $evalReqRow['Description'];
+                $cDesc = base64_decode($encryptedDesc);
+                $ivDesc = substr($cDesc, 0, $ivlen);
+                $hmacDesc = substr($cDesc, $ivlen, $sha2len);
+                $rawEncryptedDesc = substr($cDesc, $ivlen+$sha2len);
+                $description = openssl_decrypt($rawEncryptedDesc, $cipher, $key, $options=OPENSSL_RAW_DATA, $ivDesc);
+                $calcmacDesc = hash_hmac('sha256', $rawEncryptedDesc, $key, $as_binary=true);
+                if (hash_equals($hmacDesc, $calcmacDesc)) // timing attack safe comparison
+                {
+                    echo "<td>" . htmlspecialchars($description) . "</td><br>";
+                }
+
+                // Decrypt request
+                $encryptedReq = $evalReqRow['Request'];
+                $cReq = base64_decode($encryptedReq);
+                $ivReq = substr($cReq, 0, $ivlen);
+                $hmacReq = substr($cReq, $ivlen, $sha2len);
+                $rawEncryptedReq = substr($cReq, $ivlen+$sha2len);
+                $request = openssl_decrypt($rawEncryptedReq, $cipher, $key, $options=OPENSSL_RAW_DATA, $ivReq);
+                $calcmacReq = hash_hmac('sha256', $rawEncryptedReq, $key, $as_binary=true);
+                if (hash_equals($hmacReq, $calcmacReq)) // timing attack safe comparison
+                {
+                    echo "<td>" . htmlspecialchars($request) . "</td><br>";
+                }
+
                 if ($evalReqRow['FileName'] == NULL) {
                     echo "<td>Image not provided</td>";
                 }
@@ -69,11 +102,13 @@
             echo "No requests from this user<br>";
         }
 
-        require "../csrfToken.php";
-        echo "<form action='/viewRequests/viewRequestsForm.php' method='POST'>";
-        echo "<input name='submit' type='submit' value='Go back'>";
-        echo "<input type='hidden' name='token' value=".$token.">";
-        echo "</form>";
+        if ($authFailed == 0) {}
+            require "../csrfToken.php";
+            echo "<form action='/viewRequests/viewRequestsForm.php' method='POST'>";
+            echo "<input name='submit' type='submit' value='Go back'>";
+            echo "<input type='hidden' name='token' value=".$token.">";
+            echo "</form>";
+        }
     }
     else 
     {
